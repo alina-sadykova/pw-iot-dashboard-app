@@ -1,16 +1,35 @@
 import { expect, test } from "@playwright/test";
 
+import { tmpdir } from "os";
+
+/* this is parallel setup for this specific file */
+// test.describe.configure({ mode: "parallel" });
+
 test.beforeEach(async ({ page }) => {
-  await page.goto("http://localhost:4200/");
+  await page.goto("/");
 });
 
-test.describe("Form Layouts Page", () => {
+test.describe.parallel("Form Layouts Page", () => {
+  /* if we want more retries for this specific test suit,
+  we can set it as below, and all tests within this suit will be retried.
+  */
+  test.describe.configure({ retries: 2 });
+
+  /* this is sequential test execution when test dependency */
+  // test.describe.configure({ mode: "serial" });
+
   test.beforeEach(async ({ page }) => {
     await page.getByText("Forms").click();
     await page.getByText("Form Layouts").click();
   });
 
-  test("Input fields", async ({ page }) => {
+  test("Input fields", async ({ page }, testInfo) => {
+    /* We can build a precondition, if test fail and we need to retry or 
+    clean database before second retry, we can use retry
+    */
+    if (testInfo.retry) {
+      // do something: clean up database
+    }
     const usingGridEmailInput = page
       .locator("nb-card", { hasText: " Using the Grid" })
       .getByRole("textbox", { name: "Email" });
@@ -229,4 +248,76 @@ test("Web tables", async ({ page }) => {
       }
     }
   }
+});
+
+test("Date picker", async ({ page }) => {
+  await page.getByText("Forms").click();
+  await page.getByText("Datepicker").click();
+
+  const calendarInputField = page.getByPlaceholder("Form Picker");
+  await calendarInputField.click();
+
+  const date = new Date();
+
+  date.setDate(date.getDate() + 30);
+
+  const expectedDate = date.getDate().toString();
+  const expectedMonthShort = date.toLocaleString("En-US", { month: "short" });
+  const expectedMonthLong = date.toLocaleString("En-US", { month: "long" });
+  const expectedYear = date.getFullYear();
+  const dateToAssert = `${expectedMonthShort} ${expectedDate}, ${expectedYear}`;
+
+  let calendarMonthAndYear = await page
+    .locator("nb-calendar-view-mode")
+    .textContent();
+
+  const expectedMonthAndYear = ` ${expectedMonthLong} ${expectedYear} `;
+
+  while (!calendarMonthAndYear.includes(expectedMonthAndYear)) {
+    await page
+      .locator('nb-calendar-pageable-navigation [data-name="chevron-right"]')
+      .click();
+    calendarMonthAndYear = await page
+      .locator("nb-calendar-view-mode")
+      .textContent();
+  }
+
+  await page
+    .locator('[class="day-cell ng-star-inserted"]')
+    .getByText(expectedDate, { exact: true })
+    .click();
+
+  await expect(calendarInputField).toHaveValue(dateToAssert);
+});
+
+test("Sliders", async ({ page }) => {
+  // // approach 1: update attribute
+  // const tempGauge = page.locator(
+  //   '[tabtitle="Temperature"] ngx-temperature-dragger circle'
+  // );
+  // await tempGauge.evaluate((node) => {
+  //   node.setAttribute("cx", "232.630");
+  //   node.setAttribute("cy", "232.630");
+  // });
+  // await tempGauge.click();
+
+  // Approach 2: mouse movement
+  const tempBox = page.locator(
+    '[tabtitle="Temperature"] ngx-temperature-dragger'
+  );
+
+  // scrollIntoViewIfNeeded will makw sure we scrolled down to make sure the entire element is in view
+  await tempBox.scrollIntoViewIfNeeded();
+
+  // boundingBox(): PW create  X and Y coordinates for this element
+  const box = await tempBox.boundingBox();
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 100, y);
+  await page.mouse.move(x + 100, y + 100);
+  await page.mouse.up();
+  // await expect(tempBox).toContainText("30");
 });

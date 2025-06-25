@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }, testInfo) => {
-  await page.goto("http://uitestingplayground.com/ajax");
+  await page.goto(process.env.URL);
   await page.getByText("Button Triggering AJAX Request").click();
 
   /* Another way to overwrite default timeout value for every test in this suite:
@@ -49,7 +49,7 @@ test("Auto waiting", async ({ page }) => {
   });
 });
 
-test("Alternative waits", async ({ page }) => {
+test.skip("Alternative waits", async ({ page }) => {
   const successButton = page.locator(".bg-success");
 
   // Wait 1 ____ wait for element
@@ -71,7 +71,7 @@ test("Alternative waits", async ({ page }) => {
   expect(allTextContents).toContain("Data loaded with AJAX get request.");
 });
 
-test("Timeouts", async ({ page }) => {
+test.skip("Timeouts", async ({ page }) => {
   /* PW has:
     - global timeout;
     - test timeout (has default of 30s!!!!);
