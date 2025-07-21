@@ -55,3 +55,9 @@ test("Parameterizes methods @ smoke", async ({ page }) => {
   await pm.onDatePcikerPage().selectComonDatePickerDateFromToday(10);
   await pm.onDatePcikerPage().selectDatePickerWithRangeFromToday(1, 4);
 });
+
+test.only("Testing with Argos CI", async ({ page }) => {
+  const pm = new PageManager(page);
+  await pm.navigateTo().formLayoutsPage();
+  await pm.navigateTo().datepickerPage();
+});
