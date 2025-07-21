@@ -17,6 +17,14 @@ export default defineConfig<TestOptions>({
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
   reporter: [
+    process.env.CI ? ["dot"] : ["list"],
+    [
+      "@argos-ci/playwright/reporter",
+      {
+        // Upload to Argos on CI only.
+        uploadToArgos: !!process.env.CI,
+      },
+    ],
     ["json", { outputFile: "test-results/jsonReport.json" }],
     ["junit", { outputFile: "test-results/junitReport.xml" }],
     // ["allure-playwright"],
@@ -38,6 +46,8 @@ export default defineConfig<TestOptions>({
       mode: "off",
       size: { width: 1920, height: 1080 },
     },
+    // Capture screenshot after each test failure.
+    screenshot: "only-on-failure",
   },
 
   // project settings
