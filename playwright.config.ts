@@ -16,7 +16,11 @@ export default defineConfig<TestOptions>({
   fullyParallel: false,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : undefined,
-  reporter: "html",
+  reporter: [
+    ["json", { outputFile: "test-results/jsonReport.json" }],
+    ["junit", { outputFile: "test-results/junitReport.xml" }],
+    ["allure-playwright"],
+  ],
   // runtime setting
   use: {
     globalsQaURL: "https://www.globalsqa.com/demo-site/draganddrop/",
