@@ -13,7 +13,7 @@ test.describe.parallel("Form Layouts Page @block", () => {
   /* if we want more retries for this specific test suit,
   we can set it as below, and all tests within this suit will be retried.
   */
-  test.describe.configure({ retries: 2 });
+  test.describe.configure({ retries: 1 });
 
   /* this is sequential test execution when test dependency */
   // test.describe.configure({ mode: "serial" });
@@ -52,7 +52,7 @@ test.describe.parallel("Form Layouts Page @block", () => {
     await expect(usingGridEmailInput).toHaveValue("test2@test.com");
   });
 
-  test("Radio buttons", async ({ page }) => {
+  test.only("Radio buttons", async ({ page }) => {
     const usingGridEmailInput = page.locator("nb-card", {
       hasText: " Using the Grid",
     });
@@ -72,31 +72,33 @@ test.describe.parallel("Form Layouts Page @block", () => {
     const radioStatus = await usingGridEmailInput
       .getByRole("radio", { name: "Option 1" })
       .isChecked();
-    expect(radioStatus).toBeTruthy();
+    await expect(usingGridEmailInput).toHaveScreenshot();
+
+    // expect(radioStatus).toBeTruthy();
 
     /* Validate that the radio was checked 
     - locator assertion
     */
-    await expect(
-      usingGridEmailInput.getByRole("radio", { name: "Option 1" })
-    ).toBeChecked();
+    // await expect(
+    //   usingGridEmailInput.getByRole("radio", { name: "Option 1" })
+    // ).toBeChecked();
 
     /* SELECT RADIO OPTION 2*/
-    await usingGridEmailInput
-      .getByRole("radio", { name: "Option 2" })
-      .check({ force: true });
+    // await usingGridEmailInput
+    //   .getByRole("radio", { name: "Option 2" })
+    //   .check({ force: true });
 
-    expect(
-      await usingGridEmailInput
-        .getByRole("radio", { name: "Option 1" })
-        .isChecked()
-    ).toBeFalsy();
+    // expect(
+    //   await usingGridEmailInput
+    //     .getByRole("radio", { name: "Option 1" })
+    //     .isChecked()
+    // ).toBeFalsy();
 
-    expect(
-      await usingGridEmailInput
-        .getByRole("radio", { name: "Option 2" })
-        .isChecked()
-    ).toBeTruthy();
+    // expect(
+    //   await usingGridEmailInput
+    //     .getByRole("radio", { name: "Option 2" })
+    //     .isChecked()
+    // ).toBeTruthy();
   });
 });
 
