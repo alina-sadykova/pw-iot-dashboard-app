@@ -42,6 +42,7 @@ export const test = base.extend<TestOptions>({
     known as SETTING UP environment
     anything after USE() blick will work as a TEARDOWN and executed after the test is completed.
     */
+    console.log("SETUP");
     await use("");
     console.log("TEARDOWN");
   },

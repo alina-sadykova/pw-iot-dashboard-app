@@ -14,6 +14,7 @@ test("Parameterizes methods", async ({ pageManager }) => {
       process.env.PASSWORD,
       "Option 1"
     );
+
   await pageManager
     .onFormLayoutsPage()
     .submitInlineFormWithNameEmailAndCheckbox(
