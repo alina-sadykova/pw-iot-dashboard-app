@@ -17,6 +17,12 @@ jobs:
         run: npm ci --force
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps --force
+      - name: Build Angular App
+        run: npm run build
+      - name: Start Angular App
+        run: |
+          npm run start &  # or your dev server: ng serve
+          npx wait-on http://localhost:4200
       - name: Run Playwright tests
         run: npm run pageObjects-chrome
       - uses: actions/upload-artifact@v4
