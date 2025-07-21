@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });
 
-test.describe.parallel("Form Layouts Page", () => {
+test.describe.parallel("Form Layouts Page @block", () => {
   /* if we want more retries for this specific test suit,
   we can set it as below, and all tests within this suit will be retried.
   */
